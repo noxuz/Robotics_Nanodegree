@@ -1,0 +1,110 @@
+#include <ros/ros.h>
+#include <visualization_msgs/Marker.h>
+#include "nav_msgs/Odometry.h"
+#include <math.h>
+
+
+int arrivedPick = 0;
+int arrivedDrop = 0;
+
+void odomCallback(const nav_msgs::Odometry::ConstPtr& msg)
+{
+
+  if(fabs(msg->pose.pose.position.x - 2) < 2)
+  {
+    arrivedPick = 1;
+  }
+
+    if(fabs(msg->pose.pose.position.x - 7) < 2)
+  {
+    arrivedDrop = 1;
+  }
+
+}
+
+int main( int argc, char** argv )
+{
+  ros::init(argc, argv, "add_markers");
+  ros::NodeHandle n;
+  ros::Rate r(20);
+  ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
+
+  // Subscribe to odom values
+  ros::Subscriber marker_sub = n.subscribe("/odom", 1000, odomCallback);
+
+  // Set our initial shape type to be a cube
+  uint32_t shape = visualization_msgs::Marker::CUBE;
+
+
+    visualization_msgs::Marker marker;
+    // Set the frame ID and timestamp.  See the TF tutorials for information on these.
+    marker.header.frame_id = "map";
+    marker.header.stamp = ros::Time::now();
+
+    // Set the namespace and id for this marker.  This serves to create a unique ID
+    // Any marker sent with the same namespace and id will overwrite the old one
+    marker.ns = "basic_shapes";
+    marker.id = 0;
+
+    // Set the marker type.  Initially this is CUBE, and cycles between that and SPHERE, ARROW, and CYLINDER
+    marker.type = shape;
+
+    // Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
+    marker.action = visualization_msgs::Marker::ADD;
+
+    // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
+    marker.pose.position.x = 2;
+    marker.pose.position.y = 0;
+    marker.pose.position.z = 0;
+    marker.pose.orientation.x = 0.0;
+    marker.pose.orientation.y = 0.0;
+    marker.pose.orientation.z = 0.0;
+    marker.pose.orientation.w = 1.0;
+
+    // Set the scale of the marker -- 1x1x1 here means 1m on a side
+    marker.scale.x = 0.4;
+    marker.scale.y = 0.4;
+    marker.scale.z = 0.4;
+
+    // Set the color -- be sure to set alpha to something non-zero!
+    marker.color.r = 0.0f;
+    marker.color.g = 0.0f;
+    marker.color.b = 1.0f;
+    marker.color.a = 1.0;
+
+    // Publish the marker at pickup zone
+    while (marker_pub.getNumSubscribers() < 1)
+    {
+      if (!ros::ok())
+      {
+        return 0;
+      }
+      ROS_WARN_ONCE("Please create a subscriber to the marker");
+      sleep(1);
+    }
+    marker_pub.publish(marker);
+
+
+    // Hide marker once the robot reached the destination
+    while(!arrivedPick){}
+    marker.action = visualization_msgs::Marker::DELETEALL;
+    marker_pub.publish(marker);
+
+    // Wait 5 seconds to simulate a pickup
+    ros::Duration(5.0).sleep();
+
+    // Wait for robot to reach drop off zone
+    while(!arrivedDrop){}
+
+    // Appear marker at drop off 
+    marker.pose.position.x = 7;
+    marker.action = visualization_msgs::Marker::ADD;
+    marker_pub.publish(marker);
+
+  // Spin
+  ros::spin();
+
+  return 0;
+
+  
+}
