@@ -3,6 +3,9 @@
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
 #include <math.h>
 
+
+// This node detects detects pickup in x=2 and dropoff in x=7
+
 // Flag variables for detecting pickup and dropoff
 int arrivedPick;
 int arrivedDrop;
