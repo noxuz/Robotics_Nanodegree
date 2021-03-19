@@ -1,15 +1,42 @@
 #include <ros/ros.h>
 #include <visualization_msgs/Marker.h>
+#include "geometry_msgs/PoseWithCovarianceStamped.h"
+#include <math.h>
+
+// Flag variables for detecting pickup and dropoff
+int arrivedPick;
+int arrivedDrop;
+
+void amclCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
+{
+  if(abs(msg->pose.pose.position.x - 2) < .3)
+  {
+    arrivedPick = 1;
+  }
+
+    if(abs(msg->pose.pose.position.x - 7) < .3)
+  {
+    arrivedDrop = 1;
+  }
+
+}
 
 int main( int argc, char** argv )
 {
-  ros::init(argc, argv, "add_markers");
+  ros::init(argc, argv, "add_markers2");
   ros::NodeHandle n;
   ros::Rate r(20);
   ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
 
+  // Subscribe to odom values
+  ros::Subscriber marker_sub = n.subscribe("/amcl_pose", 1000, amclCallback);
+
   // Set our initial shape type to be a cube
   uint32_t shape = visualization_msgs::Marker::CUBE;
+
+  // Init flags to 0
+  arrivedDrop = 0;
+  arrivedPick = 0;
 
     visualization_msgs::Marker marker;
     // Set the frame ID and timestamp.  See the TF tutorials for information on these.
@@ -59,21 +86,37 @@ int main( int argc, char** argv )
     }
     marker_pub.publish(marker);
 
-    // Wait 5 seconds
-    ros::Duration(5.0).sleep();
 
-    // Hide the marker
-    marker.action = visualization_msgs::Marker::DELETEALL;
-    marker_pub.publish(marker);
+  // Detecting the positions for appearing and disappearing the marker
+  while(1)
+  {
+    if(arrivedPick)
+    {
+      marker.action = visualization_msgs::Marker::DELETEALL;
+      marker_pub.publish(marker);
 
-    // Wait 5 seconds
-    ros::Duration(5.0).sleep();
+      // Wait 5 seconds to simulate a pickup
+      ros::Duration(5.0).sleep();
 
-    // Appear marker at drop off 
-    marker.pose.position.x = 7;
-    marker.action = visualization_msgs::Marker::ADD;
-    marker_pub.publish(marker);
+      while(1)
+      {
+        if(arrivedDrop)
+        {
+          // Appear marker at drop off 
+          marker.pose.position.x = 7;
+          marker.action = visualization_msgs::Marker::ADD;
+          marker_pub.publish(marker);
 
+          break;
+        }
+
+      }
+
+      break;
+
+    }
+
+  }
 
   // Spin
   ros::spin();
