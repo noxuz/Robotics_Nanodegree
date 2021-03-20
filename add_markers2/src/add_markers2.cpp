@@ -4,7 +4,7 @@
 #include <math.h>
 
 
-// This node detects pickup in x=1.5 and dropoff in x=4.7,y=5
+// This node detects pickup in x=1.5,y=0 and dropoff in x=4,y=2.5
 
 // Flag variables for detecting pickup and dropoff
 int arrivedPick;
@@ -14,12 +14,12 @@ void amclCallback(const geometry_msgs::PoseWithCovarianceStamped msg)
 {
   ROS_INFO("HELOOOOOOOOOOOO");
 
-  if(std::abs(msg.pose.pose.position.x - 1.5) < 0.2)
+  if(std::abs(msg.pose.pose.position.x - 1.5) < 0.25)
   {
     arrivedPick = 1;
   }
 
-    if((std::abs(msg.pose.pose.position.x - 4.7) < 0.2) && (std::abs(msg.pose.pose.position.y - 5) < 0.2))
+    if((std::abs(msg.pose.pose.position.x - 4) < 0.25) && (std::abs(msg.pose.pose.position.y - 2.5) < 0.25))
   {
     arrivedDrop = 1;
   }
@@ -109,8 +109,8 @@ int main( int argc, char** argv )
         if(arrivedDrop)
         {
           // Appear marker at drop off 
-          marker.pose.position.x = 4.7;
-          marker.pose.position.y = 5;
+          marker.pose.position.x = 4;
+          marker.pose.position.y = 2.5;
           marker.action = visualization_msgs::Marker::ADD;
           marker_pub.publish(marker);
 

@@ -70,8 +70,8 @@ int main( int argc, char** argv )
     ros::Duration(5.0).sleep();
 
     // Appear marker at drop off 
-    marker.pose.position.x = 4.7;
-    marker.pose.position.y = 5;
+    marker.pose.position.x = 4;
+    marker.pose.position.y = 2.5;
     marker.action = visualization_msgs::Marker::ADD;
     marker_pub.publish(marker);
 
