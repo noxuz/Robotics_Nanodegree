@@ -28,7 +28,7 @@ int main( int argc, char** argv )
     marker.action = visualization_msgs::Marker::ADD;
 
     // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
-    marker.pose.position.x = 2;
+    marker.pose.position.x = 1.5;
     marker.pose.position.y = 0;
     marker.pose.position.z = 0;
     marker.pose.orientation.x = 0.0;
@@ -70,7 +70,8 @@ int main( int argc, char** argv )
     ros::Duration(5.0).sleep();
 
     // Appear marker at drop off 
-    marker.pose.position.x = 7;
+    marker.pose.position.x = 4.7;
+    marker.pose.position.y = 5;
     marker.action = visualization_msgs::Marker::ADD;
     marker_pub.publish(marker);
 

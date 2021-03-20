@@ -4,23 +4,27 @@
 #include <math.h>
 
 
-// This node detects detects pickup in x=2 and dropoff in x=7
+// This node detects pickup in x=1.5 and dropoff in x=4.7,y=5
 
 // Flag variables for detecting pickup and dropoff
 int arrivedPick;
 int arrivedDrop;
 
-void amclCallback(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
+void amclCallback(const geometry_msgs::PoseWithCovarianceStamped msg)
 {
-  if(abs(msg->pose.pose.position.x - 2) < .3)
+  ROS_INFO("HELOOOOOOOOOOOO");
+
+  if(std::abs(msg.pose.pose.position.x - 1.5) < 0.2)
   {
     arrivedPick = 1;
   }
 
-    if(abs(msg->pose.pose.position.x - 7) < .3)
+    if((std::abs(msg.pose.pose.position.x - 4.7) < 0.2) && (std::abs(msg.pose.pose.position.y - 5) < 0.2))
   {
     arrivedDrop = 1;
   }
+
+  return;
 
 }
 
@@ -28,11 +32,10 @@ int main( int argc, char** argv )
 {
   ros::init(argc, argv, "add_markers2");
   ros::NodeHandle n;
-  ros::Rate r(20);
   ros::Publisher marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 1);
 
   // Subscribe to odom values
-  ros::Subscriber marker_sub = n.subscribe("/amcl_pose", 1000, amclCallback);
+  ros::Subscriber marker_sub = n.subscribe("amcl_pose", 100, amclCallback);
 
   // Set our initial shape type to be a cube
   uint32_t shape = visualization_msgs::Marker::CUBE;
@@ -58,7 +61,7 @@ int main( int argc, char** argv )
     marker.action = visualization_msgs::Marker::ADD;
 
     // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
-    marker.pose.position.x = 2;
+    marker.pose.position.x = 1.5;
     marker.pose.position.y = 0;
     marker.pose.position.z = 0;
     marker.pose.orientation.x = 0.0;
@@ -106,22 +109,27 @@ int main( int argc, char** argv )
         if(arrivedDrop)
         {
           // Appear marker at drop off 
-          marker.pose.position.x = 7;
+          marker.pose.position.x = 4.7;
+          marker.pose.position.y = 5;
           marker.action = visualization_msgs::Marker::ADD;
           marker_pub.publish(marker);
 
           break;
         }
 
+        // Spin
+        ros::spinOnce();
       }
 
       break;
 
     }
 
+      // Spin
+      ros::spinOnce();
+
   }
 
-  // Spin
   ros::spin();
 
   return 0;
