@@ -1,5 +1,5 @@
-# Final project from the Robotics Software Engineering program at Udacity
-It consists of a mobile robot performing autonomous navigation,
+# Robotics Software Engineering program at Udacity
+ROS simualtion final project, consists of a mobile robot performing autonomous navigation,
 localizing itself with the acml algorithm, in a map generated with the help of the gmapping ROS package. 
 
 The robot is targeted to pick an object in a location on the map dictated by the pick_objects package, and then dropping it at a defined location, the visualization is performed by the add_makers package which subscribes to the amcl_pose topic and detects whenever the robot has reached the pickup and drop off locations in order to show a cube marker accordingly.
