@@ -2,6 +2,8 @@
 ROS simualtion final project, consists of a mobile robot performing autonomous navigation,
 localizing itself with the acml algorithm, in a map generated with the help of the gmapping ROS package. 
 
+https://youtu.be/p8ibFq9aDFk
+
 The robot is targeted to pick an object in a location on the map dictated by the pick_objects package, and then dropping it at a defined location, the visualization is performed by the add_makers package which subscribes to the amcl_pose topic and detects whenever the robot has reached the pickup and drop off locations in order to show a cube marker accordingly.
 
 gmapping is a package that provides laser-based SLAM, which is used to create a 2-D occupancy grid map from the kinect depth camera mounted on the robot, a map can be generated calling from another therminal the "rosrun map_server map_saver -f mymap" command.
