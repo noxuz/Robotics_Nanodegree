@@ -1,5 +1,5 @@
 # Robotics Software Engineering program at Udacity
-ROS simualtion final project, consists of a mobile robot performing autonomous navigation,
+ROS simulation final project, consists of a mobile robot performing autonomous navigation,
 localizing itself with the acml algorithm, in a map generated with the help of the gmapping ROS package. 
 
 https://youtu.be/p8ibFq9aDFk
