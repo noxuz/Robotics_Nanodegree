@@ -12,8 +12,6 @@ int arrivedDrop;
 
 void amclCallback(const geometry_msgs::PoseWithCovarianceStamped msg)
 {
-  ROS_INFO("HELOOOOOOOOOOOO");
-
   if(std::abs(msg.pose.pose.position.x - 1.5) < 0.25)
   {
     arrivedPick = 1;
